@@ -1,5 +1,6 @@
 package name.modid;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -14,6 +15,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
@@ -31,19 +33,19 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 
+import static name.modid.SugarcaneClientClient.LOGGER;
 import static name.modid.SugarcaneClientClient.MOD_ID;
+import static name.modid.Pipelines.FILLED_THROUGH_WALLS;
 
 public class BlockEntityESP implements ClientModInitializer, RenderingUtils.RenderBuffers {
+    public record BlockEntityOptions(boolean enabled, RenderingUtils.Colour col){}
+
+    public static HashMap<BlockEntityType<?>, BlockEntityOptions> blockEntitiesOptions = Presets.defaultBlockEntityESPPreset;
+
     private static BlockEntityESP instance;
 
-    private static final RenderPipeline FILLED_THROUGH_WALLS = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
-            .withLocation(Identifier.fromNamespaceAndPath(MOD_ID, "pipeline/debug_filled_box_through_walls"))
-            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-            .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLES)
-            .build()
-    );
-
-    private BufferBuilder buffer;
+    private BufferBuilder fillBuffer;
+    private BufferBuilder outlineBuffer;
 
 
     private MappableRingBuffer vertexBuffer;
@@ -56,9 +58,9 @@ public class BlockEntityESP implements ClientModInitializer, RenderingUtils.Rend
 
     //Assign variables for RenderingUtils
     @Override
-    public BufferBuilder getBuffer() { return buffer; }
+    public BufferBuilder getBuffer() { return fillBuffer; }
     @Override
-    public void setBuffer(BufferBuilder buffer) { this.buffer = buffer; }
+    public void setBuffer(BufferBuilder buffer) { this.fillBuffer = buffer; }
 
     @Override
     public MappableRingBuffer getVertexBuffer() { return vertexBuffer; }
@@ -69,6 +71,7 @@ public class BlockEntityESP implements ClientModInitializer, RenderingUtils.Rend
     public ByteBufferBuilder getAllocator() { return allocator; }
 
     @Override
+
     //Entry point
     public void onInitializeClient() {
         instance = this;
@@ -78,7 +81,11 @@ public class BlockEntityESP implements ClientModInitializer, RenderingUtils.Rend
     //Draw block entities onto the screen
     private void extractAndDrawBlockEntities(WorldRenderContext context) {
         renderBlockEntities(context);
+
+        //Draw filled
+        this.setBuffer(fillBuffer);
         RenderingUtils.drawFilledThroughWalls(Minecraft.getInstance(), this, FILLED_THROUGH_WALLS);
+
     }
 
     //Render blockEntities to the GPU
@@ -89,18 +96,20 @@ public class BlockEntityESP implements ClientModInitializer, RenderingUtils.Rend
         matrices.pushPose();
         matrices.translate(-camera.x, -camera.y, -camera.z);
 
-        if (buffer == null) {
-            buffer = new BufferBuilder(allocator, FILLED_THROUGH_WALLS.getVertexFormatMode(), FILLED_THROUGH_WALLS.getVertexFormat());
-        }
+        if (fillBuffer == null) { fillBuffer = new BufferBuilder(allocator, FILLED_THROUGH_WALLS.getVertexFormatMode(), FILLED_THROUGH_WALLS.getVertexFormat()); }
 
         List<BlockEntity> blockEntities = ChunkUtils.getLoadedBlockEntities().toList();
         for (BlockEntity be : blockEntities) {
-            BlockPos endPos = new BlockPos(be.getBlockPos().getX()+1, be.getBlockPos().getY()+1, be.getBlockPos().getZ()+1);
-            RenderingUtils.drawCuboid(buffer, matrices.last().pose(), be.getBlockPos(), endPos, new RenderingUtils.Colour(0f, 1f, 0f, 0.5f));
+            BlockEntityOptions options = blockEntitiesOptions.get(be.getType());
+            if (options != null && options.enabled) {
+                BlockPos endPos = new BlockPos(be.getBlockPos().getX() + 1, be.getBlockPos().getY() + 1, be.getBlockPos().getZ() + 1);
+                RenderingUtils.drawCuboid(fillBuffer, matrices.last().pose(), be.getBlockPos(), endPos, options.col);
+
+            }
         }
 
         //Draw an invisible box to prevent crashes
-        RenderingUtils.drawCuboid(buffer, matrices.last().pose(), new BlockPos(0,0,0), new BlockPos(0,0,0), new RenderingUtils.Colour(0f, 1f, 0f, 0.5f));
+        RenderingUtils.drawCuboid(fillBuffer, matrices.last().pose(), new BlockPos(0,0,0), new BlockPos(0,0,0), new RenderingUtils.Colour(0f, 1f, 0f, 0.5f));
 
         matrices.popPose();
     }
