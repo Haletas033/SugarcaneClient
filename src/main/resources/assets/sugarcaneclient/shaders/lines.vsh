@@ -21,7 +21,7 @@ const mat4 VIEW_SCALE = mat4(
 
 void main() {
     vec4 linePosStart = ProjMat * VIEW_SCALE * ModelViewMat * vec4(Position, 1.0);
-    vec4 linePosEnd = ProjMat * VIEW_SCALE * ModelViewMat * vec4(Position, 1.0);
+    vec4 linePosEnd = ProjMat * VIEW_SCALE * ModelViewMat * vec4(Normal + Position, 1.0);
 
     vec3 ndc1 = linePosStart.xyz / linePosStart.w;
     vec3 ndc2 = linePosEnd.xyz / linePosEnd.w;
