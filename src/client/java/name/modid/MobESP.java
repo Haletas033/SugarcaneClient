@@ -89,7 +89,7 @@ public class MobESP implements ClientModInitializer, RenderingUtils.RenderBuffer
         for (LivingEntity mob : mobs){
             Vec3 startPos = new Vec3(mob.getBoundingBox().minX, mob.getBoundingBox().minY, mob.getBoundingBox().minZ);
             Vec3 endPos = new Vec3(mob.getBoundingBox().maxX, mob.getBoundingBox().maxY, mob.getBoundingBox().maxZ);
-            RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(), startPos, endPos, getColor(mob));
+            RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(), startPos, endPos, getColourByHealth(mob));
         }
 
         RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(), new Vec3(0,0,0), new Vec3(0,0,0), new RenderingUtils.Colour(1f,0f,0f,1f));
@@ -97,10 +97,17 @@ public class MobESP implements ClientModInitializer, RenderingUtils.RenderBuffer
         matrices.popPose();
     }
 
-    private RenderingUtils.Colour getColor(LivingEntity e) {
+    private RenderingUtils.Colour getColourByDistance(LivingEntity e) {
         float f = Minecraft.getInstance().player.distanceTo(e) / 20F;
         float r = Mth.clamp(2 - f, 0, 1);
         float g = Mth.clamp(f, 0, 1);
+        return new RenderingUtils.Colour(r, g, 0, 1);
+    }
+
+    private RenderingUtils.Colour getColourByHealth(LivingEntity e) {
+        float normalizedH = e.getHealth() / e.getMaxHealth();
+        float r = normalizedH < 0.5f ? 1f : 2f - 2f * normalizedH;
+        float g = normalizedH > 0.5f ? 1f : 2f * normalizedH;
         return new RenderingUtils.Colour(r, g, 0, 1);
     }
 }
