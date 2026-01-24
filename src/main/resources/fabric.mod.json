@@ -20,7 +20,8 @@
 		],
 		"client": [
 			"name.modid.SugarcaneClientClient",
-			"name.modid.BlockEntityESP"
+			"name.modid.BlockEntityESP",
+			"name.modid.MobESP"
 		]
 	},
 	"mixins": [

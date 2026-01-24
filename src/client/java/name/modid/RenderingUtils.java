@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MappableRingBuffer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
@@ -52,6 +53,15 @@ public class RenderingUtils {
     enum VertexBufferMode {
         FillMode,
         OutlineMode
+    }
+
+    //Convert BlockPos to Vec3
+    public static Vec3 BPtoVec3(BlockPos bp){
+        return new Vec3(
+                bp.getX(),
+                bp.getY(),
+                bp.getZ()
+        );
     }
 
     //Draw vertices onto the screen
@@ -167,25 +177,25 @@ public class RenderingUtils {
     //Interface to the AddVertex lambda
     @FunctionalInterface
     interface VertexAdder {
-        void add(int index, Vector3f n);
+        void add(int index, Vec3 n);
     }
 
     //Render any mesh made of vertices and indices onto the screen
-    public static void drawMesh(BufferBuilder buffer, Matrix4fc positionMatrix, float[] vertices, int[] indices, Colour col){
+    public static void drawMesh(BufferBuilder buffer, Matrix4fc positionMatrix, double[] vertices, int[] indices, Colour col){
         //Lambda to simply the vertex adding process
-        VertexAdder AddVertex = (int index, Vector3f n) ->
+        VertexAdder AddVertex = (int index, Vec3 n) ->
                 buffer.addVertex(positionMatrix,
-                vertices[index],
-                vertices[index+1],
-                vertices[index+2]
-        ).setColor(col.r, col.g, col.b, col.a);
+                        (float) vertices[index],
+                        (float) vertices[index+1],
+                        (float) vertices[index+2]
+                ).setColor(col.r, col.g, col.b, col.a);
 
         for (int i = 0; i < indices.length; i+=3){
             int i0 = indices[i]*3;
             int i1 = indices[i+1]*3;
             int i2 = indices[i+2]*3;
 
-            Vector3f nullVec = new Vector3f(0);
+            Vec3 nullVec = new Vec3(0,0,0);
 
             AddVertex.add(i0, nullVec);
             AddVertex.add(i1, nullVec);
@@ -194,31 +204,31 @@ public class RenderingUtils {
     }
 
     //Render any made of vertices and line indices onto the screen
-    public static void drawLineMesh(BufferBuilder buffer, Matrix4fc positionMatrix, float[] vertices, int[] indices, Colour col) {
+    public static void drawLineMesh(BufferBuilder buffer, Matrix4fc positionMatrix, double[] vertices, int[] indices, Colour col) {
         //Lambda to simply the vertex adding process
-        VertexAdder AddVertex = (int index, Vector3f n) ->
+        VertexAdder AddVertex = (int index, Vec3 n) ->
                 buffer.addVertex(positionMatrix,
-                        vertices[index],
-                        vertices[index+1],
-                        vertices[index+2]
-                ).setNormal(n.x, n.y, n.z).setLineWidth(2).setColor(col.r, col.g, col.b, 1f); //Fully opaque
+                        (float) vertices[index],
+                        (float) vertices[index+1],
+                        (float) vertices[index+2]
+                ).setNormal((float) n.x, (float) n.y, (float) n.z).setLineWidth(2).setColor(col.r, col.g, col.b, 1f); //Fully opaque
 
         for (int i = 0; i < indices.length; i+=2){
             int i0 = indices[i]*3;
             int i1 = indices[i+1]*3;
 
             //Get normals (technically 0,0,0 would work but looks better this way)
-            float dx = vertices[i1] - vertices[i0];
-            float dy = vertices[i1 + 1] - vertices[i0 + 1];
-            float dz = vertices[i1 + 2] - vertices[i0 + 2];
+            double dx = vertices[i1] - vertices[i0];
+            double dy = vertices[i1 + 1] - vertices[i0 + 1];
+            double dz = vertices[i1 + 2] - vertices[i0 + 2];
 
             float length = (float) Math.sqrt(dx*dx + dy*dy + dz*dz);
             if (length == 0) length = 1f;
-            float nx = dx / length;
-            float ny = dy / length;
-            float nz = dz / length;
+            double nx = dx / length;
+            double ny = dy / length;
+            double nz = dz / length;
 
-            Vector3f normalVec = new Vector3f(nx, ny, nz);
+            Vec3 normalVec = new Vec3((float) nx, (float) ny, (float) nz);
 
             AddVertex.add(i0, normalVec);
             AddVertex.add(i1, normalVec);
@@ -227,26 +237,26 @@ public class RenderingUtils {
     }
 
     //Render a cuboid onto the screen from 2 points
-    public static void drawCuboid(BufferBuilder buffer, Matrix4fc positionMatrix, BlockPos startPos, BlockPos endPos, Colour col){
-        float[] vertices = getCuboidVertices(startPos, endPos);
+    public static void drawCuboid(BufferBuilder buffer, Matrix4fc positionMatrix, Vec3 startPos, Vec3 endPos, Colour col){
+        double[] vertices = getCuboidVertices(startPos, endPos);
         int[] indices = getCuboidIndices();
         drawMesh(buffer, positionMatrix, vertices, indices, col);
     }
 
-    public static void drawCuboidOutline(BufferBuilder buffer, Matrix4fc positionMatrix, BlockPos startPos, BlockPos endPos, Colour col){
-        float[] vertices = getCuboidVertices(startPos, endPos);
+    public static void drawCuboidOutline(BufferBuilder buffer, Matrix4fc positionMatrix, Vec3 startPos, Vec3 endPos, Colour col){
+        double[] vertices = getCuboidVertices(startPos, endPos);
         int[] indices = getCuboidLineIndices();
         drawLineMesh(buffer, positionMatrix, vertices, indices, col);
     }
 
     //Get vertices needed for a cuboid from 2 points
-    private static float @NonNull [] getCuboidVertices(BlockPos startPos, BlockPos endPos) {
-        float fspX = startPos.getX(); float fepX = endPos.getX();
-        float fspY = startPos.getY(); float fepY = endPos.getY();
-        float fspZ = startPos.getZ(); float fepZ = endPos.getZ();
+    private static double @NonNull [] getCuboidVertices(Vec3 startPos, Vec3 endPos) {
+        double fspX = startPos.x; double fepX = endPos.x;
+        double fspY = startPos.y; double fepY = endPos.y;
+        double fspZ = startPos.z; double fepZ = endPos.z;
 
         //Cuboid vertices
-        return new float[]{
+        return new double[]{
                 //Back
                 fspX, fspY, fspZ, //Bottom left
                 fepX, fspY, fspZ, //Bottom right

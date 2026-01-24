@@ -44,18 +44,12 @@ public class BlockEntityESP implements ClientModInitializer, RenderingUtils.Rend
 
     public static HashMap<BlockEntityType<?>, BlockEntityOptions> blockEntitiesOptions = Presets.defaultBlockEntityESPPreset;
 
-    private static BlockEntityESP instance;
-
     private BufferBuilder fillBuffer;
     private BufferBuilder outlineBuffer;
 
 
     private MappableRingBuffer vertexFillBuffer;
     private MappableRingBuffer vertexOutlineBuffer;
-
-    public static BlockEntityESP getInstance() {
-        return instance;
-    }
 
     private static final ByteBufferBuilder fillAllocator = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
     private static final ByteBufferBuilder outlineAllocator = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
@@ -87,7 +81,6 @@ public class BlockEntityESP implements ClientModInitializer, RenderingUtils.Rend
 
     //Entry point
     public void onInitializeClient() {
-        instance = this;
         WorldRenderEvents.BEFORE_TRANSLUCENT.register(this::extractAndDrawBlockEntities);
     }
 
@@ -114,16 +107,17 @@ public class BlockEntityESP implements ClientModInitializer, RenderingUtils.Rend
         for (BlockEntity be : blockEntities) {
             BlockEntityOptions options = blockEntitiesOptions.get(be.getType());
             if (options != null && options.enabled) {
-                BlockPos endPos = new BlockPos(be.getBlockPos().getX() + 1, be.getBlockPos().getY() + 1, be.getBlockPos().getZ() + 1);
-                RenderingUtils.drawCuboid(fillBuffer, matrices.last().pose(), be.getBlockPos(), endPos, options.col);
-                RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(), be.getBlockPos(), endPos, options.col);
+                BlockPos BPendPos = new BlockPos(be.getBlockPos().getX() + 1, be.getBlockPos().getY() + 1, be.getBlockPos().getZ() + 1);
+                Vec3 endPos = RenderingUtils.BPtoVec3(BPendPos);
+                RenderingUtils.drawCuboid(fillBuffer, matrices.last().pose(), RenderingUtils.BPtoVec3(be.getBlockPos()), endPos, options.col);
+                RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(), RenderingUtils.BPtoVec3(be.getBlockPos()), endPos, options.col);
 
             }
         }
 
         //Draw an invisible box to prevent crashes
-        RenderingUtils.drawCuboid(fillBuffer, matrices.last().pose(), new BlockPos(0,0,0), new BlockPos(0,0,0), new RenderingUtils.Colour(0f, 1f, 0f, 0.5f));
-        RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(), new BlockPos(0,0,0), new BlockPos(0,0,0), new RenderingUtils.Colour(0f, 1f, 0f, 0.5f));
+        RenderingUtils.drawCuboid(fillBuffer, matrices.last().pose(), new Vec3(0,0,0), new Vec3(0,0,0), new RenderingUtils.Colour(0f, 1f, 0f, 0.5f));
+        RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(), new Vec3(0,0,0), new Vec3(0,0,0), new RenderingUtils.Colour(0f, 1f, 0f, 0.5f));
 
         matrices.popPose();
     }
