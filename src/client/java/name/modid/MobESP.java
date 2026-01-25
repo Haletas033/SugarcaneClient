@@ -1,94 +1,33 @@
 package name.modid;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MappableRingBuffer;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
-import java.util.stream.Stream;
 
-import static name.modid.Pipelines.ESP_LINES;
-import static name.modid.Pipelines.FILLED_THROUGH_WALLS;
-import static name.modid.SugarcaneClientClient.LOGGER;
-
-public class MobESP implements ClientModInitializer, RenderingUtils.RenderBuffers{
-
-    private BufferBuilder fillBuffer;
-    private BufferBuilder outlineBuffer;
-
-
-    private MappableRingBuffer vertexFillBuffer;
-    private MappableRingBuffer vertexOutlineBuffer;
-
-    private static final ByteBufferBuilder fillAllocator = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
-    private static final ByteBufferBuilder outlineAllocator = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
-
+public class MobESP extends ESP{
     @Override
-    public BufferBuilder getFillBuffer() { return fillBuffer; }
-
-    @Override
-    public void setFillBuffer(BufferBuilder buffer) { this.fillBuffer = buffer; }
-
-    @Override
-    public BufferBuilder getOutlineBuffer() { return outlineBuffer; }
-
-    @Override
-    public void setOutlineBuffer(BufferBuilder buffer) { this.outlineBuffer = buffer; }
-
-    @Override
-    public MappableRingBuffer getVertexFillBuffer() { return vertexFillBuffer; }
-
-    @Override
-    public void setVertexFillBuffer(MappableRingBuffer buffer) { this.vertexFillBuffer = buffer; }
-
-    @Override
-    public MappableRingBuffer getVertexOutlineFillBuffer() { return vertexOutlineBuffer; }
-
-    @Override
-    public void setVertexOutlineFillBuffer(MappableRingBuffer buffer) { this.vertexOutlineBuffer = buffer; }
-
-    @Override
-    public ByteBufferBuilder getFillAllocator() { return fillAllocator; }
-
-    @Override
-    public ByteBufferBuilder getOutlineAllocator() { return outlineAllocator; }
-
-    @Override
-    public void onInitializeClient() {
-
-        WorldRenderEvents.AFTER_ENTITIES.register(this::ExtractAndDrawMobs);
+    void onInitialize() {
+        WorldRenderEvents.AFTER_ENTITIES.register(this::ExtractAndDraw);
     }
 
-    private void ExtractAndDrawMobs(WorldRenderContext context){
-        RenderMobs(context);
-
+    @Override
+    void ExtractAndDraw(WorldRenderContext context){
+        RenderESP(context);
         RenderingUtils.drawLinesThroughWalls(Minecraft.getInstance(), this, Pipelines.ESP_LINES);
     }
 
-    private void RenderMobs(WorldRenderContext context){
-        PoseStack matrices = context.matrices();
-        Vec3 camera = context.worldState().cameraRenderState.pos;
-
-        matrices.pushPose();
-        matrices.translate(-camera.x, -camera.y, -camera.z);
-
-        if (fillBuffer == null) { fillBuffer = new BufferBuilder(fillAllocator, FILLED_THROUGH_WALLS.getVertexFormatMode(), FILLED_THROUGH_WALLS.getVertexFormat()); }
-        if (outlineBuffer == null) { outlineBuffer = new BufferBuilder(outlineAllocator, ESP_LINES.getVertexFormatMode(), ESP_LINES.getVertexFormat()); }
-
+    @Override
+    void RenderFunctionality(WorldRenderContext context, PoseStack matrices, BufferBuilder fillBuffer, BufferBuilder outlineBuffer){
         List<LivingEntity> mobs = EntityUtils.GetLivingEntities().toList();
         for (LivingEntity mob : mobs){
-            ;
             AABB lerpedBoundingBox = EntityUtils.getLerpedBox(mob, Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
             Vec3 startPos = new Vec3(lerpedBoundingBox.minX, lerpedBoundingBox.minY, lerpedBoundingBox.minZ);
             Vec3 endPos = new Vec3(lerpedBoundingBox.maxX, lerpedBoundingBox.maxY, lerpedBoundingBox.maxZ);
@@ -96,8 +35,6 @@ public class MobESP implements ClientModInitializer, RenderingUtils.RenderBuffer
         }
 
         RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(), new Vec3(0,0,0), new Vec3(0,0,0), new RenderingUtils.Colour(1f,0f,0f,1f));
-
-        matrices.popPose();
     }
 
     private RenderingUtils.Colour getColourByDistance(LivingEntity e) {
