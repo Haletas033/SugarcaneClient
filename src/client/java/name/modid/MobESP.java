@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -87,8 +88,10 @@ public class MobESP implements ClientModInitializer, RenderingUtils.RenderBuffer
 
         List<LivingEntity> mobs = EntityUtils.GetLivingEntities().toList();
         for (LivingEntity mob : mobs){
-            Vec3 startPos = new Vec3(mob.getBoundingBox().minX, mob.getBoundingBox().minY, mob.getBoundingBox().minZ);
-            Vec3 endPos = new Vec3(mob.getBoundingBox().maxX, mob.getBoundingBox().maxY, mob.getBoundingBox().maxZ);
+            ;
+            AABB lerpedBoundingBox = EntityUtils.getLerpedBox(mob, Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
+            Vec3 startPos = new Vec3(lerpedBoundingBox.minX, lerpedBoundingBox.minY, lerpedBoundingBox.minZ);
+            Vec3 endPos = new Vec3(lerpedBoundingBox.maxX, lerpedBoundingBox.maxY, lerpedBoundingBox.maxZ);
             RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(), startPos, endPos, getColourByHealth(mob));
         }
 
