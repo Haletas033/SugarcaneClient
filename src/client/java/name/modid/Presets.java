@@ -1,9 +1,11 @@
 package name.modid;
 
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class Presets {
     public static HashMap<BlockEntityType<?>, BlockEntityESP.BlockEntityOptions> defaultBlockEntityESPPreset = new HashMap<>(Map.of(
@@ -14,4 +16,6 @@ public class Presets {
             BlockEntityType.SHULKER_BOX, new BlockEntityESP.BlockEntityOptions(true, new RenderingUtils.Colour(1f, 0f, 1f, 0.5f)),
             BlockEntityType.MOB_SPAWNER, new BlockEntityESP.BlockEntityOptions(true, new RenderingUtils.Colour(0f, 0f, 1f, 0.5f))
     ));
+
+    public static Function<LivingEntity, RenderingUtils.Colour> mobESPColourFunc = ColourRenderFunctions::getColourByHealth;
 }
