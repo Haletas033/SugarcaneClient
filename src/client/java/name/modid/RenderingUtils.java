@@ -44,7 +44,11 @@ public class RenderingUtils {
         ByteBufferBuilder getOutlineAllocator();
     }
 
-    public record Colour(float r, float g, float b, float a){}
+    public record Colour(float r, float g, float b, float a){
+        public Colour(float r, float g, float b) {
+            this(r, g, b, 0.5f);
+        }
+    }
 
     private static final Vector4f COLOR_MODULATOR = new Vector4f(1f, 1f, 1f, 1f);
     private static final Vector3f MODEL_OFFSET = new Vector3f();

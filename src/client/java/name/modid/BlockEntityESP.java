@@ -18,9 +18,7 @@ import static name.modid.Pipelines.ESP_LINES;
 import static name.modid.Pipelines.FILLED_THROUGH_WALLS;
 
 public class BlockEntityESP extends ESP {
-    public record BlockEntityOptions(boolean enabled, RenderingUtils.Colour col){}
-
-    public static HashMap<BlockEntityType<?>, BlockEntityOptions> blockEntitiesOptions = Presets.defaultBlockEntityESPPreset;
+    private static HashMap<BlockEntityType<?>, Presets.ESPOptions> blockEntitiesOptions = Presets.defaultBlockEntityESPPreset;
 
     //Entry point
     @Override
@@ -42,18 +40,29 @@ public class BlockEntityESP extends ESP {
     void RenderFunctionality(WorldRenderContext context, PoseStack matrices, BufferBuilder fillBuffer, BufferBuilder outlineBuffer) {
         List<BlockEntity> blockEntities = ChunkUtils.getLoadedBlockEntities().toList();
         for (BlockEntity be : blockEntities) {
-            BlockEntityOptions options = blockEntitiesOptions.get(be.getType());
-            if (options != null && options.enabled) {
+            Presets.ESPOptions options = blockEntitiesOptions.get(be.getType());
+
+            //If options aren't explicitly set but enable all is true use that instead.
+            if (options == null && Presets.getEnableAll(Presets.EnableAllType.BLOCK_ENTITIES).enabled()){
+                options = Presets.getEnableAll(Presets.EnableAllType.BLOCK_ENTITIES).options();
+            }
+
+            if (options != null) {
+                //Fill in ColourOption information
+                options.colourOptions().setBlockPos(RenderingUtils.BPtoVec3(be.getBlockPos()));
+
                 BlockPos BPendPos = new BlockPos(be.getBlockPos().getX() + 1, be.getBlockPos().getY() + 1, be.getBlockPos().getZ() + 1);
                 Vec3 endPos = RenderingUtils.BPtoVec3(BPendPos);
-                RenderingUtils.drawCuboid(fillBuffer, matrices.last().pose(), RenderingUtils.BPtoVec3(be.getBlockPos()), endPos, options.col);
-                RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(), RenderingUtils.BPtoVec3(be.getBlockPos()), endPos, options.col);
+                RenderingUtils.drawCuboid(fillBuffer, matrices.last().pose(),
+                        RenderingUtils.BPtoVec3(be.getBlockPos()), endPos, Presets.blockEntityESPColourFunc.apply(options.colourOptions()));
+                RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(),
+                        RenderingUtils.BPtoVec3(be.getBlockPos()), endPos, Presets.blockEntityESPColourFunc.apply(options.colourOptions()));
 
             }
         }
 
         //Draw an invisible box to prevent crashes
-        RenderingUtils.drawCuboid(fillBuffer, matrices.last().pose(), new Vec3(0,0,0), new Vec3(0,0,0), new RenderingUtils.Colour(0f, 1f, 0f, 0.5f));
-        RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(), new Vec3(0,0,0), new Vec3(0,0,0), new RenderingUtils.Colour(0f, 1f, 0f, 0.5f));
+        RenderingUtils.drawCuboid(fillBuffer, matrices.last().pose(), new Vec3(0,0,0), new Vec3(0,0,0), new RenderingUtils.Colour(0f, 0f, 0f));
+        RenderingUtils.drawCuboidOutline(outlineBuffer, matrices.last().pose(), new Vec3(0,0,0), new Vec3(0,0,0), new RenderingUtils.Colour(0f, 0f, 0f));
     }
 }
