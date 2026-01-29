@@ -2,10 +2,10 @@ package name.modid.ESPLike;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
-import name.modid.EntityUtils;
+import name.modid.utils.EntityUtils;
 import name.modid.Pipelines;
 import name.modid.Presets;
-import name.modid.RenderingUtils;
+import name.modid.utils.RenderingUtils;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.Minecraft;
@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.HashMap;
 import java.util.List;
 
-public class MobESP extends ESP{
+public class MobESP extends ESP {
     public static HashMap<EntityType<?>, Presets.ESPOptions> mobOptions = Presets.defaultMobESPPreset;
 
     @Override

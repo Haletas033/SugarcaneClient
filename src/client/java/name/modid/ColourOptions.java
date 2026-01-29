@@ -1,5 +1,6 @@
 package name.modid;
 
+import name.modid.utils.RenderingUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
@@ -19,6 +20,8 @@ public class ColourOptions {
     public RenderingUtils.Colour getStaticColour() { return staticColour; }
 
     public ColourOptions setStaticColour(RenderingUtils.Colour staticColour) { this.staticColour = staticColour; return this; }
+
+    public ColourOptions setStaticColour(float r, float g, float b) { this.staticColour = new RenderingUtils.Colour(r,g,b); return this; }
 
     public RenderingUtils.Colour[] getAnimatedColours() { return animatedColours; }
 

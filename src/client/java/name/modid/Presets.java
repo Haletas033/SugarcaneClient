@@ -1,8 +1,7 @@
 package name.modid;
 
-import net.minecraft.references.Items;
+import name.modid.utils.RenderingUtils;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.HashMap;
@@ -49,4 +48,5 @@ public class Presets {
 
     public static Function<ColourOptions, RenderingUtils.Colour> blockEntityESPColourFunc = ColourRenderFunctions::getStaticColour;
     public static Function<ColourOptions, RenderingUtils.Colour> mobESPColourFunc = ColourRenderFunctions::getColourByHealth;
+    public static Function<ColourOptions, RenderingUtils.Colour> playerESPColourFunc = ColourRenderFunctions::getColourByHealth;
 }

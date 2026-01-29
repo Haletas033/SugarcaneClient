@@ -1,6 +1,5 @@
-package name.modid;
+package name.modid.utils;
 
-import net.fabricmc.fabric.impl.object.builder.FabricEntityTypeImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,7 +9,6 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import net.minecraft.client.DeltaTracker;
 
 
 /**Class for anything to do with entities**/

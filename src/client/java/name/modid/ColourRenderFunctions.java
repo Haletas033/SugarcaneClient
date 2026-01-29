@@ -1,9 +1,8 @@
 package name.modid;
 
+import name.modid.utils.RenderingUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
 
 /**Class containing different colour visualization methods e.g., byDistance, byHealth, solid**/
 public class ColourRenderFunctions {

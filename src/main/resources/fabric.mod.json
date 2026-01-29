@@ -21,7 +21,8 @@
 		"client": [
 			"name.modid.SugarcaneClientClient",
 			"name.modid.ESPLike.BlockEntityESP",
-			"name.modid.ESPLike.MobESP"
+			"name.modid.ESPLike.MobESP",
+			"name.modid.ESPLike.PlayerESP"
 		]
 	},
 	"mixins": [

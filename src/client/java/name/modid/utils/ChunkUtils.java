@@ -1,12 +1,10 @@
-package name.modid;
+package name.modid.utils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.chunk.LevelChunk;
 
-import java.util.Objects;
 import java.util.stream.Stream;
 
 /**Class to help with chunk themed things**/
