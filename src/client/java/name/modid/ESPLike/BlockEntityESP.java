@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.*;
-import name.modid.utils.ChunkUtils;
-import name.modid.Presets;
-import name.modid.utils.RenderingUtils;
+import name.modid.Utils.ChunkUtils;
+import name.modid.Presets.Presets;
+import name.modid.Utils.RenderingUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;

@@ -1,6 +1,6 @@
-package name.modid;
+package name.modid.Presets;
 
-import name.modid.utils.RenderingUtils;
+import name.modid.Utils.RenderingUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 

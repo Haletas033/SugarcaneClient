@@ -2,11 +2,11 @@ package name.modid.ESPLike;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
-import name.modid.ColourOptions;
+import name.modid.Presets.ColourOptions;
 import name.modid.Pipelines;
-import name.modid.Presets;
-import name.modid.utils.EntityUtils;
-import name.modid.utils.RenderingUtils;
+import name.modid.Presets.Presets;
+import name.modid.Utils.EntityUtils;
+import name.modid.Utils.RenderingUtils;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.Minecraft;

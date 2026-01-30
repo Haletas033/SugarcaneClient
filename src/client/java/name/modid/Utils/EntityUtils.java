@@ -1,4 +1,4 @@
-package name.modid.utils;
+package name.modid.Utils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;

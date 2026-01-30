@@ -1,4 +1,4 @@
-package name.modid.utils;
+package name.modid.Utils;
 
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
