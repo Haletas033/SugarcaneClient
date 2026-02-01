@@ -2,7 +2,9 @@ package name.modid.Commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
@@ -23,11 +25,17 @@ public class CommandManager {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(name);
 
-            for (int i = 0; i < args.length-1; i++){
+            RequiredArgumentBuilder<CommandSourceStack, ?> arg =
+                    Commands.argument(
+                            args[args.length - 1].getA(),
+                            args[args.length - 1].getB()
+                    ).executes(func);
+
+            for (int i = args.length-2; i >= 0 ; i--){
                 assert args[i] != null;
-                command.then(Commands.argument(args[i].getA(), args[i].getB()));
+                arg = Commands.argument(args[i].getA(), args[i].getB()).then(arg);
             }
-            command.then(Commands.argument(args[args.length-1].getA(), args[args.length-1].getB()).executes(func));
+            command.then(arg);
 
 
             //Register command

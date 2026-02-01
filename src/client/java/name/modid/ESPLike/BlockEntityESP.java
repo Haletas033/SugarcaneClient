@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.*;
+import name.modid.Presets.Modules;
 import name.modid.Utils.ChunkUtils;
 import name.modid.Presets.Presets;
 import name.modid.Utils.RenderingUtils;
@@ -32,10 +33,12 @@ public class BlockEntityESP extends ESP {
     @Override
     //Draw block entities onto the screen
     void ExtractAndDraw(WorldRenderContext context) {
-        RenderESP(context);
+        if (Modules.getModule("BlockEntityESP").enabled()) {
+            RenderESP(context);
 
-        RenderingUtils.drawFilledThroughWalls(Minecraft.getInstance(), this, FILLED_THROUGH_WALLS);
-        RenderingUtils.drawLinesThroughWalls(Minecraft.getInstance(), this, ESP_LINES);
+            RenderingUtils.drawFilledThroughWalls(Minecraft.getInstance(), this, FILLED_THROUGH_WALLS);
+            RenderingUtils.drawLinesThroughWalls(Minecraft.getInstance(), this, ESP_LINES);
+        }
     }
 
     @Override

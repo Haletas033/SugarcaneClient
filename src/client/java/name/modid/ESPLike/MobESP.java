@@ -2,6 +2,7 @@ package name.modid.ESPLike;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
+import name.modid.Presets.Modules;
 import name.modid.Utils.EntityUtils;
 import name.modid.Pipelines;
 import name.modid.Presets.Presets;
@@ -27,8 +28,10 @@ public class MobESP extends ESP {
 
     @Override
     void ExtractAndDraw(WorldRenderContext context){
-        RenderESP(context);
-        RenderingUtils.drawLinesThroughWalls(Minecraft.getInstance(), this, Pipelines.ESP_LINES);
+        if (Modules.getModule("MobESP").enabled()) {
+            RenderESP(context);
+            RenderingUtils.drawLinesThroughWalls(Minecraft.getInstance(), this, Pipelines.ESP_LINES);
+        }
     }
 
     @Override

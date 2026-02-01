@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import name.modid.Presets.ColourOptions;
 import name.modid.Pipelines;
+import name.modid.Presets.Modules;
 import name.modid.Presets.Presets;
 import name.modid.Utils.EntityUtils;
 import name.modid.Utils.RenderingUtils;
@@ -20,13 +21,15 @@ import java.util.stream.Stream;
 public class PlayerESP extends ESP {
     @Override
     void onInitialize() {
-        WorldRenderEvents.AFTER_ENTITIES.register(this::ExtractAndDraw);
+            WorldRenderEvents.AFTER_ENTITIES.register(this::ExtractAndDraw);
     }
 
     @Override
     void ExtractAndDraw(WorldRenderContext context){
-        RenderESP(context);
-        RenderingUtils.drawLinesThroughWalls(Minecraft.getInstance(), this, Pipelines.ESP_LINES);
+        if (Modules.getModule("PlayerESP").enabled()) {
+            RenderESP(context);
+            RenderingUtils.drawLinesThroughWalls(Minecraft.getInstance(), this, Pipelines.ESP_LINES);
+        }
     }
 
     @Override
