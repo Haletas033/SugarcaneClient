@@ -47,6 +47,22 @@ public class RenderingUtils {
         public Colour(float r, float g, float b) {
             this(r, g, b, 0.5f);
         }
+
+        public static Colour add(Colour c1, Colour c2){
+            return new Colour(c1.r + c2.r, c1.g + c2.g, c1.b + c2.b);
+        }
+
+        public static Colour sub(Colour c1, Colour c2){
+            return new Colour(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b);
+        }
+
+        public static Colour multiplyByFloat(Colour c, float f){
+            return new Colour(c.r * f, c.g * f, c.b * f);
+        }
+
+        public static Colour lerp(Colour c1, Colour c2, float t){
+            return add(c1, multiplyByFloat(sub(c2, c1), t));
+        }
     }
 
     private static final Vector4f COLOR_MODULATOR = new Vector4f(1f, 1f, 1f, 1f);

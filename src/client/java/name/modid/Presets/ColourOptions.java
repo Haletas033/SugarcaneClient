@@ -1,16 +1,19 @@
 package name.modid.Presets;
 
 import name.modid.Utils.RenderingUtils;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 public class ColourOptions {
     private RenderingUtils.Colour staticColour = new RenderingUtils.Colour(0f, 1f, 0f); //Default colour
     //Colours used in animated gradient
-    private RenderingUtils.Colour[] animatedColours = {
-            new RenderingUtils.Colour(1f,0f,1f) ,
-            new RenderingUtils.Colour(0f,0f,1f)
-    };
+    private Tuple<RenderingUtils.Colour, RenderingUtils.Colour> animatedColours = new Tuple<>(
+            new RenderingUtils.Colour(0f,1f,0f) ,
+            new RenderingUtils.Colour(1f,0f,0f)
+    );
+    private float animationSpeed = 5000f;
+
     private RenderingUtils.Colour highColour = new RenderingUtils.Colour(0f, 1f, 0f); //Colour used for high health or far away distance
     private RenderingUtils.Colour lowColour = new RenderingUtils.Colour(1f, 0f, 0f); //Colour used for low health or close up distance
     //Given to ColourOptions by other methods
@@ -23,9 +26,9 @@ public class ColourOptions {
 
     public ColourOptions setStaticColour(float r, float g, float b) { this.staticColour = new RenderingUtils.Colour(r,g,b); return this; }
 
-    public RenderingUtils.Colour[] getAnimatedColours() { return animatedColours; }
+    public Tuple<RenderingUtils.Colour, RenderingUtils.Colour> getAnimatedColours() { return animatedColours; }
 
-    public ColourOptions setAnimatedColours(RenderingUtils.Colour[] animatedColours) { this.animatedColours = animatedColours; return this; }
+    public ColourOptions setAnimatedColours(Tuple<RenderingUtils.Colour, RenderingUtils.Colour> animatedColours) { this.animatedColours = animatedColours; return this; }
 
     public RenderingUtils.Colour getHighColour() { return highColour; }
 
@@ -42,4 +45,12 @@ public class ColourOptions {
     public Vec3 getBlockPos() { return blockPos; }
 
     public ColourOptions setBlockPos(Vec3 blockPos) { this.blockPos = blockPos; return this; }
+
+    public float getAnimationSpeed() {
+        return animationSpeed;
+    }
+
+    public void setAnimationSpeed(float animationSpeed) {
+        this.animationSpeed = animationSpeed;
+    }
 }
