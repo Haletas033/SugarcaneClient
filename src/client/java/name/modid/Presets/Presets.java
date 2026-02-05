@@ -46,7 +46,7 @@ public class Presets {
 
     public static HashMap<EntityType<?>, ESPOptions> defaultMobESPPreset = new HashMap<>(Map.of());
 
-    public static Function<ColourOptions, RenderingUtils.Colour> blockEntityESPColourFunc = ColourRenderFunctions::getAnimatedColour;
+    public static Function<ColourOptions, RenderingUtils.Colour> blockEntityESPColourFunc = ColourRenderFunctions::getStaticColour;
     public static Function<ColourOptions, RenderingUtils.Colour> mobESPColourFunc = ColourRenderFunctions::getColourByHealth;
-    public static Function<ColourOptions, RenderingUtils.Colour> playerESPColourFunc = ColourRenderFunctions::getColourByHealth;
+    public static Function<ColourOptions, RenderingUtils.Colour> playerESPColourFunc = ColourRenderFunctions::getAnimatedColour;
 }

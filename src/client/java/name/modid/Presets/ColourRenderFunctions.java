@@ -13,9 +13,6 @@ public class ColourRenderFunctions {
     private static float time = 0f;
     public static RenderingUtils.Colour getAnimatedColour(ColourOptions colourOptions){
         time += Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false) / colourOptions.getAnimationSpeed();
-        System.out.println("A raw = " + colourOptions.getAnimatedColours().getA());
-        System.out.println("B raw = " + colourOptions.getAnimatedColours().getB());
-
         return RenderingUtils.Colour.lerp(colourOptions.getAnimatedColours().getA(), colourOptions.getAnimatedColours().getB(), (float) (((Math.sin(time) * 0.5) + 0.5)));
     }
 
